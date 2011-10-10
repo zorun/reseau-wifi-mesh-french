@@ -1,0 +1,460 @@
+\documentclass[a4paper,french,11pt,twoside]{article}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} % encodage en utf8
+\usepackage{url} % permet l'utilisation des urls avec \url{}
+\usepackage[pdfborder=0]{hyperref} 
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage{utopia}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%original (full) : http://wirelessafrica.meraka.org.za/wiki/index.php/DIY_Mesh_Guide
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\def\clap#1{\hbox to 0pt{\hss #1\hss}}%
+\def\ligne#1{%
+\hbox to \hsize{%
+\vbox{\centering #1}}}%
+\def\haut#1#2#3{%
+\hbox to \hsize{%
+\rlap{\vtop{\raggedright #1}}%
+\hss
+%\clap{\vtop{\centering #2}}%
+\hss
+\llap{\vtop{\raggedleft #3}}}}%
+\def\bas#1#2#3{%
+\hbox to \hsize{%
+\rlap{\vbox{\raggedright #1}}%
+\hss
+\clap{\vbox{\centering #2}}%
+\hss
+\llap{\vbox{\raggedleft #3}}}}%
+\def\maketitle{%
+\thispagestyle{empty}\vbox to \vsize{%
+\haut{}{\@blurb}{}
+\vfill
+\vspace{1cm}
+\begin{flushright}
+\usefont{OT1}{ptm}{m}{n}
+\huge \@title
+\end{flushright}
+\par
+\hrule height 4pt
+\par
+\begin{flushright}
+\usefont{OT1}{phv}{m}{n}
+\Large \@author
+\par
+\end{flushright}
+\vspace{1cm}
+\vfill
+\vfill
+\bas{}{\@location \\ version du \@date}{}
+}%
+\cleardoublepage
+}
+\def\date#1{\def\@date{#1}}
+\def\author#1{\def\@author{#1}}
+\def\title#1{\def\@title{#1}}
+\def\location#1{\def\@location{#1}}
+\def\blurb#1{\def\@blurb{#1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\thispagestyle{empty}
+\begin{document}
+
+\title{Réseaux Wi-Fi}
+\author{Réseau maillé / Mesh Network}
+\location{Internet}
+\date{\today}
+
+\maketitle
+\thispagestyle{empty}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% INTRODUCTION
+\thispagestyle{empty}
+
+Ce document est une adaptation de «~\textit{Building a Rural Wireless Mesh Network - A do-it-yourself guide to planning and building a Freifunk based mesh network}~»
+
+\medskip
+\noindent Première édition (Anglais), juin 2007\\
+\noindent Version 0.7 - pre-release
+
+\medskip
+\noindent Seconde édition (Anglais), Août 2007\\
+\noindent Version 0.8 - pre-release
+
+\bigskip
+\noindent Wireless Africa Team of the Meraka Institute For more information about Wireless Africa :\\
+\noindent \url{http://wirelessafrica.meraka.org.za}
+
+\bigskip
+Merci d'envoyer vos suggestions, corrections et feedback sur le guide et la façon dont vous l'avez utilisé à l'adresse suivante (Anglais):
+
+\medskip
+\noindent \url{http://wirelessafrica.meraka.org.za/wiki/index.php/DIY_Mesh_Guide}
+
+\bigskip
+Ce guide est diffusé sous la \textbf{licence Creative Commons Attribution-ShareAlike 2.5}. \\
+Pour plus de détails, voir \url{http://creativecommons.org/licenses/by-sa/2.5/}.
+
+\bigskip
+\begin{figure}[!h]
+\center
+\includegraphics[scale=1]{cc-by-sa-logo.png}
+\label{cc-by-sa-logo} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\bigskip
+\noindent Auteurs : \\
+David \textsc{Johnson}, Karel \textsc{Matthee}, Dare \textsc{Sokoya}, Lawrence \textsc{Mboweni}, Ajay \textsc{Makan} et Henk \textsc{Kotze}.
+
+\bigskip
+\medskip
+\noindent Première édition (Français), Octobre 2010\\
+\noindent Version 1.0
+
+\bigskip
+\noindent Version Française : \\
+\noindent \textbf{version~\LaTeX}~: Skhaen, Zorun \\
+\noindent \textbf{Traduction} : Zorun, Benjamin, Herdir, quota\_atypique, Asone, Rafiot, Skhaen et Err404
+
+\bigskip
+Merci d'envoyer vos suggestions, corrections et feedback sur l'adaptation du guide et la façon dont vous l'avez utilisé à l'adresse suivante (Français) : \href{mailto:skhaen@gmail.com}{\textit{skhaen@gmail.com}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+\setcounter{page}{3}
+\part{Réseaux Wi-Fi Mesh}
+\section{Description d'un réseau maillé sans fil}
+
+Un \emph{réseau maillé sans fil} (WMN pour «~\textit{Wireless Mesh Network}~») est constitué de \emph{nœuds} qui forment l'épine dorsale («~\textit{backbone}~») du réseau. Les nœuds sont capables de se configurer automatiquement et de se reconfigurer dynamiquement pour maintenir la connectivité. Cela confère au réseau maillé ses capacités «~d'auto-organisation~» et «~d'auto-réparation~». Cette interaction directe entre les nœuds supprime la contrainte d'un système de gestion centralisé. Un protocole de routage intelligent permet de faire transiter des paquets de données entre des nœuds qui ne sont pas nécessairement à portée directe l'un de l'autre. L'information peut ainsi être transmise de la source à la destination en passant par plusieurs intermédiaires. Par rapport à un réseau conventionnel où le chemin entre source et destination est direct, l'avantage est ici la robustesse, surtout pour la communication de liaison avec le réseau central.
+
+Le réseau devrait être capable de converger (se réorganiser) rapidement lorsque un nœud est ajouté, enlevé, ou déplacé. Pour plus de détails, se renseigner sur le concept de «~\textit{backhaul}\footnote{Backhaul : \url{http://en.wikipedia.org/wiki/Backhaul\_\%28telecommunications\%29} et réseau d'amenée \url{http://fr.wikipedia.org/wiki/R\%C3\%A9seau_d\%27amen\%C3\%A9e}}~»
+
+%%%%% IMAGE 1 %%%%%
+\begin{figure}[!h]
+\center
+\includegraphics[scale=0.29]{figure1.jpeg}
+\caption{Description d'un réseau maillé sans fil}
+\label{figure1} %l'étiquette pour faire référence à cette image
+\end{figure}
+
+\subsection{Mesh Node}
+
+Au sein d'un réseau maillé sans fil, un \emph{nœud\footnote{Un nœud est un point qui est relié au réseau, aussi bien en WiFi que en filaire}} est composé d'un routeur Wi-Fi et d'une antenne. Le nœud peut être installé aussi bien à l'intérieur qu'à l'extérieur, à condition qu'il soit protégé des intempéries. L'antenne peut être soit une antenne omnidirectionnelle interne standard, soit une antenne externe (par exemple, montée sur un toit) omnidirectionnelle ou directionnelle. Un nœud ne communique qu'avec les autres nœuds du réseau maillé.
+
+\subsection{Point d'accès Wi-Fi}
+
+Un point d'accès Wi-Fi est composé d'un routeur Wi-Fi et d'une antenne. De même que pour un nœud, ce point d'accès Wi-Fi peut être installé aussi bien à l'intérieur qu'à l'extérieur, à condition qu'il soit protégé des intempéries. L'antenne peut être une antenne interieure omnidirectionnelle standard ou une antenne omnidirectionnelle montée à l'extérieur, par exemple sur un toit. Un point d'accès Wi-Fi met à disposition un «~hotspot~» (réseau Wi-Fi) sur lequel n'importe quel équipement doté d'une carte Wi-Fi peut se connecter.
+
+\subsection{Avantages d'un réseau maillé}
+
+\begin{itemize}
+\renewcommand{\labelitemi}{$\bullet$}
+         \item{\textbf{Auto-organisation :} Le réseau maillé sans fil se constitue de lui-même une fois que les nœuds ont été configuré et activés.}
+        \item{\textbf{Tolérance aux erreurs :} Si des routes redondantes existent dans le réseau, le flux d'information n'est pas interrompu lorsqu'un noeud tombe en panne. Le réseau redirigera automatiquement les flux d'information par une autre route disponible.}
+    \item{\textbf{Auto-réparation :} une fois remis en route, un nœud rejoint le réseau sans aucune intervention.}
+     \item{\textbf{Propriété partagée :} La propriété du réseau est partagée, ce qui permet de répartir la charge du support réseau entre plusieurs personnes.}
+    \item{\textbf{Coût structurel faible :} Les nœuds peuvent être constitués à moindre coût, avec du matériel que l'on trouve facilement dans le commerce.}
+    \item{\textbf{Faible coût incrémentiel de l'extension du réseau :} Pour chaque nouveau nœud ajouté au réseau maillé, la portée ainsi que la qualité du réseau sont améliorées, le tout pour un investissement minime.}
+    \item{\textbf{Facilité de déploiement :} Il suffit d'une formation basique pour que les membres de la communauté soient capables de constituer leurs propres nœuds, de les configurer et de les déployer dans le réseau maillé.}
+\end{itemize}
+
+\subsection{Principes des réseaux maillés sans fil}
+
+\begin{itemize}
+\renewcommand{\labelitemi}{$\bullet$}
+     \item{La communication entre les nœuds est basé sur du WiFi (IEEE 802.11 a/b/g) avec des antennes multi-directionnelles ou omni-directionnelles.}
+    \item{Toutes les bornes sont en mode ad-hoc, pas de mode client ou de mode infrastructure (point d'accès).}
+     \item{Chaque nœud du réseau possède le même ESSID\footnote{\textbf{Service Set IDentifier} -- identifiant de 32 caractères propre à chaque réseau et qui est présent en tête des messages. Le SSID désigne le réseau auquel est attaché le poste.} (nom du réseau) et le même BSSID (Basic Service Set Identification -- adresse matérielle) ; le BSSID doit être fixe pour empêcher la fragmentation du réseau.}
+    \item{Tous les nœuds du réseau opèrent sur le même canal WiFi, \textit{i.e.} la même fréquence.}
+     \item{Dans un réseau maillé idéal, chaque nœud devrait pouvoir «~voir~» au minimum deux autres nœuds. Cette configuration permet un fonctionnement de secours satisfaisant si un nœud cesse de fonctionner, qu'il s'agisse d'une défaillance matérielle, d'alimentation ou de manipulation...}
+     \item{Un protocole de routage, comme OLSR\footnote{OLSR -- confer annexe \ref{olsr} pour une présentation rapide} ou Babel\footnote{Babel -- confer annexe \ref{babel} pour une présentation rapide}, route le trafic IP entre les interfaces Wi-Fi des nœuds. Il «~apprend~» les différentes routes disponibles en recoupant les informations de routage échangées entre les nœuds, et en mettant à jour la table de routage en temps réel (Babel ne touchera pas aux routes déjà existantes, il ne supprime que les routes qu'il aura déjà ajouté lui même). Cette fonctionnalité permet une tolérance aux pannes accrue, car elle fournit quand c'est possible une route alternative lorsqu'un nœud ne fonctionne plus.}
+     \item{Aucun périphérique Wi-Fi ne doit se connecter directement sur un nœud. Le but des nœuds du réseau maillé est, en effet, de fournir un «~squelette~» le plus robuste possible, et doit donc être considéré comme une infrastructure critique. Celle-ci doit être administrée d'une façon qui assure une haute disponibilité : il faut faire comme si l'intégrité du réseau dépendait du bon fonctionnement de chaque nœud. L'accès à ce réseau -- login, mot de passe ou autre -- ne devrait être accessible qu'à l'équipe technique, et non directement aux utilisateurs.}
+     \item{Chaque adresse IP sur le réseau doit être unique pour permettre à un ordinateur de se connecter à n'importe quel autre périphérique sur le réseau.}
+     \item{Un ordinateur peut se connecter au réseau maillé via un câble ethernet ou par un point d'accès Wi-Fi (hotspot) connecté du côté «~LAN~» d'un nœud.}
+     \item{Il est possible d'introduire un nœud spécial qui est relié à un autre réseau par fibre optique, liaison PPP, … Ce nœud-passerelle peut aussi servir de nœud du réseau maillé (cela évite de le relier par ethernet à un ou plusieurs nœud), mais il ne sera pas configuré exactement comme les autres.}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Considérations importantes}
+
+\begin{itemize}
+\renewcommand{\labelitemi}{$\bullet$}
+    \item{\textbf{Coût de mise en place versus coût d'entretien :} Il faut faire un compromis entre le coût de la mise en place initiale d'un réseau bien conçu, au début du projet, et le coût de la maintenance d'un réseau mal organisé. Cela vaut vraiment le coup de prévoir ses besoins à l'avance, d'acheter le matériel adéquat et d'introduire des routes redondantes dans le réseau maillé lorsque cela est possible.}
+    \item{\textbf{Régulation des Télécommunications :} Chaque pays possède son propre  corpus de dispositions légales encadrant l'usage d'équipements sans fil. Vérifiez auprès de votre régulateur local\footnote{Confer annexe \ref{legislation} pour plus de renseignements} pour toute disposition spécifique concernant l'équipement Wi-Fi, l'utilisation des bandes d'émission à 2,4 GHz et 5,8 GHz, et la puissance maximale d'émission autorisée pour un dispositif radio.}
+    \item{\textbf{Gestion du réseau sans fil :} (canaux) Il y a seulement trois bandes qui ne se chevauchent pas (\textit{i.e.} qui n'interfèrent pas entre elles) dans les standards IEEE 802.11 b/g : ce sont les canaux 1, 6, et 11.}
+    \item{\textbf{Gestion du réseau Ethernet :} (sous-réseaux) Les adresses IPv4 sont supportées, mais IPv6 est également possible avec OLSR et Babel. Ce document ne traite pas d'IPv6.}
+    \item{\textbf{Le Wi-Fi est une technologie de communication en champ libre :} Plusieurs types d'obstacles peuvent interférer avec les signaux et doivent être pris en compte :}
+        \begin{itemize}
+            \item{Arbres et plantes : l'eau sur les feuilles a un impact négatif sur la propagation du signal, car le maximum d'absorption de l'eau se situe autour de 2,4 GHz (c'est la raison pour laquelle c'est la fréquence utilisée dans les micro-ondes)}
+            \item{Matériaux de construction : les objets métalliques comme les toits ou les murs en béton armé affaiblissent le signal.}
+        \end{itemize}
+   \item{\textbf{Sources d'interference :} les fours à micro-ondes, les climatiseurs, et autres appareils radio peuvent interférer avec le matériel Wi-Fi. Il est préférable d'éviter les interférences pour s'assurer des liaisons stables.}
+     \item{\textbf{Orages et foudre :} Tout matériel électronique est en général très sensible aux surtensions et notamment à la foudre. Il faut envisager des protections anti-foudre, surtout pour le matériel Wi-Fi installé en extérieur.}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Préparer le réseau sans fil}
+
+Les réseaux maillés sans fil doivent faire l'objet d'une préparation méticuleuse. Un tel réseau est relativement simple à mettre en place quand il n'y a que quelques nœuds locaux à configurer. Cependant, ces réseaux ont tendance à grandir assez rapidement et peuvent devenir un véritable cauchemar si ils ne sont pas pensés et préparés depuis le début. Les étapes suivantes sont de bons conseils à suivre pour la création d'un réseau maillé sans fil.
+
+\subsection{Cartographier le réseau}
+
+\textbf{Identifier et représenter} sur une carte les emplacements (maisons, bureaux, bâtiments...) qui vont accueillir un nœud : habituellement, on note les coordonnées GPS de ces emplacements afin de les représenter sur Google Earth. Ces coordonnées GPS peuvent également être utilisées dans le cadre d'une simulation de propagation radio : des outils spécialisés peuvent fournir un«~modèle numérique de terrain\footnote{Cf. \url{http://fr.wikipedia.org/wiki/Mod\%C3\%A8le\_num\%C3\%A9rique\_de\_terrain} pour plus de détails.}~» pour chaque liaison. Le minimum acceptable est de disposer d'un tracé schématique des emplacements. La position de chaque nœud fixe n'a pas besoin d'être extrêmement précise, mais la connaissance des positions relatives des nœuds fixes peut aider à choisir les canaux et les adresses IP.
+
+\medskip
+\textbf{Préparer le réseau} maillé sans fil (liaisons radio) : les emplacements peuvent maintenant être reliés ensemble sur le tracé. Une liaison est définie comme la ligne droite entre deux nœuds. La longueur de chaque liaison doit refléter la distance entre les emplacements. Beaucoup de liaisons sont possibles dans un réseau maillé ~---~ dessiner toutes les combinaisons imaginables n'est pas nécessaire. Dessiner également la position de l'emplacement de la passerelle Internet. L'objectif principal du tracé est d'obtenir une image globale du réseau. Le schéma vous donnera des informations sur la topologie du réseau et le nombre de sauts entre les emplacements et la passerelle Internet.
+
+\subsection{\label{choisir_topologie}Choisir la topologie du réseau}
+\subsubsection{Mesh}
+
+C'est la topologie la plus simple à configurer dans un réseau maillé. Les emplacements sont répartis de façon relativement uniforme et chaque nœud peut voir tous les autres nœuds. Si la zone devient trop grande, certains emplacements pourraient être trop loin de la passerelle Internet et devraient donc «~sauter~» de nœud en nœud de nombreuses fois avant d'atteindre la passerelle. Leur connexion s'en verrait ralentie (à moins d'utiliser un protocole de routage multi-radio qui est alors capable d'utiliser des canaux différents pour l'émission et la réception des signaux). Ajouter des passerelles à travers le réseau maillé (également réparties uniformément) pourrait être une solution. L'inconvénient est le coût élevé associé à une passerelle Internet. Il serait donc préférable de mettre en place un «~backbone~» qui interconnecte la passerelle et l'ensemble du réseau maillé, il est important de noter qu'il est possible de relier certains nœud entre eux par ethernet si le protocole de routage le permet.
+
+\medskip
+\noindent \textbf{Note} : à chaque saut on perd environ 50\% de la bande passante (cela se stabilise vers 10\%\footnote{Voir \url{http://www.pps.jussieu.fr/\%7Ejch/software/babel/wbmv4.pdf} - page 3 -- , il est possible d'utiliser plusieurs canaux wifi et de ne pas avoir cette limitation avec Babelz tout en restant compatible avec Babel.}), 
+ 
+%%%%%% FIGURE 2
+\begin{figure}[!h]
+\center
+\includegraphics[scale=0.50]{figure2.jpeg}
+\caption{Tracé simple d'un réseau maillé} %la légende
+\label{figure2}
+\end{figure}
+
+Si la passerelle est au centre, plusieurs backbones pourraient être nécessaires (par exemple, une topologie en étoile) pour assurer que chacun reçoive la même bande passante. La figure~\ref{figure2} donne un exemple de tracé de réseau maillé «~simple~» ne nécessitant pas de backbone. La figure~\ref{figure3} donne un exemple de réseau maillé «~rectangulaire~» qui  nécessite idéalement un backbone à travers le réseau maillé.
+
+%%%%%% FIGURE 3
+\begin{figure}[!h]
+\center
+\includegraphics[scale=0.42]{figure3.jpeg}
+\caption{Tracé de réseau maillé avec passerelle et backbone} %la légende
+\label{figure3}
+\end{figure}
+
+\subsubsection{Clusters (agrégats)}
+
+Y a-t-il des clusters, c'est à dire des zones plus denses (agrégats) séparées les unes des autres ? (cf. figure~\ref{figure4}) Quelle et la distance entre chacun de ces clusters ? Si les clusters sont trop éloignés les uns des autres (en prenant en compte l'utilisation d'antennes intérieures ou extérieures et la taille des antennes extérieures), un backbone pourra être nécessaire pour relier les clusters entre eux. La position de la passerelle internet (\textit{gateway)} doit aussi être pris en compte. Comme pour la topologie purement \textit{mesh}, le backbone va relier la ou les passerelle(s) à tous les clusters, assurant que tout le monde obtienne la même bande passante. La figure~\ref{figure4} montre le tracé d'un réseau avec trois clusters connectés entre eux par un backbone. On remarque notamment que la passerelle est directement intégrée au backbone pour assurer une connexion rapide à Internet.
+
+%%%%%% FIGURE 4
+\begin{figure}[!h]
+\center
+\includegraphics[scale=0.30]{figure4.jpeg}
+\caption{Réseau maillé avec clusters, backbone et passerelle} %la légende
+\label{figure4}
+\end{figure}
+
+\subsection{\label{allouer_canaux_backbone}Allouer les canaux pour le backbone et le réseau maillé}
+
+Deux types de nœuds ont déjà été identifiés dans la section~\ref{choisir_topologie} : les nœuds «~normaux~» et les éléments du backbone. Allouer un canal sur un nœud est en général assez simple. Il est possible de choisir entre trois canaux (1, 6 ou 11). Quand tous les nœuds du réseau maillé sont configurés sur le même canal, ils peuvent se «~parler~» entre eux. Lors de l'ajout d'un élément du backbone, il faut utiliser un autre canal. En effet, mettre en place un backbone nécessite un autre réseau sans fil qui doit travailler indépendamment du premier réseau maillé. Le réseau maillé «~normal~» travaillera en conséquence sur le canal 6 et le backbone sur le canal 11. Cela assurera que les deux réseaux n'interfèrent pas entre eux.  Moins d'interférences est synonyme de performances accrues. Sur la figure~\ref{figure4} il est possible par conséquent de configurer les nœuds des clusters A, B et C pour qu'ils utilisent le canal 6. Les nœuds du backbone seront configurés pour utiliser le canal 11. Dans ce contexte, nous supposons qu'un nœud du backbone est constitué de deux équipements (\textit{i.e.} deux routeurs) : un est relié au backbone sur le canal 11 et l'autre fait partie du réseau maillé sur le canal 6. Ces deux routeurs sont reliés directement l'un à l'autre par une liaison Ethernet classique.
+
+\subsection{Allouer les canaux pour les utilisateurs finaux}
+
+Dans la section~\ref{allouer_canaux_backbone}, deux canaux ont déjà été alloués pour le backbone et le réseau maillé. Dans ce cadre, il est possible d'introduire un troisième réseau sans fil : un «~hotspot~», c'est à dire un point d'accès Wi-Fi accessible à tous. Un hotspot est habituellement utilisé chez soi ou au bureau : il permet de créer un réseau sans fil local qui relie les ordinateurs portables et autres équipements sans fil. Le hotspot nécessite un point d'accès sans fil (routeur Linksys, par exemple) connecté directement à un nœud via un câble Ethernet. Le point d'accès ne doit pas utiliser le même canal que le réseau maillé ou les nœuds du backbone. Cela causerait des interférences dommageables pour la performance du réseau. Dans notre exemple, où les canaux 6 et 11 sont déjà utilisés, la seule option qui reste est d'assigner le canal 1 au hotspot. Sur le point d'accès, les interfaces LAN et sans fil sont «~bridgées~», c'est à dire reliées directement par un «~pont~» au niveau logiciel. Le routeur Wi-Fi qui crée le hotspot doit avoir un firmware spécial afin de pouvoir configurer facilement le point d'accès. Nous conseillons l'utilisation du firmware DD-WRT\footnote{Disponible à l'adresse suivante : \url{http://www.dd-wrt.com}} ou d'OpenWRT\footnote{Disponible à l'adresse suivante : \url{https://openwrt.org/}}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Mettre en place l'allocation d'adresses IP}
+
+Les adresses (LAN, hotspots …) sont attribuées selon la RFC 1918\footnote{Les RFC sont disponibles sur \url{http://www.ietf.org/rfc.html}} qui fournit des détails sur l'espace d'adressage privé. Le schéma d'adressage IP doit s'assurer que chaque nœud et périphérique Wi-Fi sur le réseau dispose d'une adresse IP unique. Il faut en premier lieu choisir un sous-réseau. La RFC 1918 donne des informations sur les sous-réseaux privés utilisables. Selon la RFC 1918, les sous-réseaux disponibles pour les réseaux IP privés qui ne seront pas connectés à Internet sont les suivants :
+
+\begin{verbatim}
+10.0.0.0        10.255.255.255      (10/8 prefix)
+172.16.0.0      172.31.255.255      (172.16/12 prefix)
+192.168.0.0     192.168.255.255     (192.168/16 prefix)
+\end{verbatim}
+
+Une fois le sous-réseau choisi, on peut attribuer les adresses IP aux nœuds et aux autres périphériques (ordinateurs, etc) de façon aléatoire. Nous vous proposons de choisir une méthode d'attribution des adresses IP et de s'y tenir rigoureusement. Un exemple d'une telle méthode d'attribution est illustrée sur la figure~\ref{figure5}. Un exemple de mise en œuvre de la méthode est montré dans la figure~\ref{figure6}.
+
+%%%%% FIGURE 5
+\begin{figure}[!h]
+\center
+\includegraphics[scale=0.60]{figure5.jpg}
+\caption{Une méthode pour assigner les adresses IP} %la légende
+\label{figure5}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Services offerts sur le réseau}
+
+Les services pouvant être fournis dépendent de beaucoup de facteurs : bande passante exigée par le service en question, compétences techniques de la communauté, quantité de mémoire disponible sur chaque nœud, …
+
+\medskip
+\noindent On peut citer par exemple :
+
+\medskip
+\begin{itemize}
+\renewcommand{\labelitemi}{$\bullet$}
+     \item{\textbf{Passerelle / Firewall} pour la régulation et la gestion de la bande passante (\textit{traffic shaping} \footnote{http://en.wikipedia.org/wiki/Traffic\_shaping ou voir la version FR (avec moins de détails)}) : c'est habituellement un serveur qui permet le partage d'une connexion à Internet unique. Il est généralement directement relié au récepteur satellite (ou à la connexion ADSL) d'un côté, et au réseau Wi-Fi sur une autre interface. La régulation de bande passante est souvent effectuée au niveau d'une passerelle, car on peut ainsi s'assurer que chacun obtient la bande passante qu'il a payé, ou bien que chacun a une part égale de bande passante.}
+     \item{\textbf{DNS} (\textit{Domain Name System}) : proposer un serveur DNS permet à la fois de résoudre des noms de domaine internes au réseau, et de servir de cache pour la résolution des noms de domaine sur Internet. Cela peut grandement améliorer le temps de réponse du réseau.}
+     \item{\textbf{E-mail} hébergé sur le réseau interne ou bien sur Internet : Ce service permet aux utilisateurs du réseau de communiquer en échangeant des messages électroniques envoyés ou reçus via un serveur mail.}
+     \item{\textbf{VOIP} : Un PBX (par ex. Asterisk\footnote{Confer annexe \ref{asterisk}}) doit être configuré quelque part sur le réseau (près de la passerelle serait logique) afin de permettre que l'on puisse passer des appels téléphoniques entre utilisateurs du réseau. Un utilisateur aura besoin d'un simple téléphone, connecté à un adapteur téléphone analogique (ATA) qui sera lui-même connecté au noeud mesh via Ethernet.}
+     \item{\textbf{Proxy Web} (pour les accès au Web) : Un serveur basé sur le réseau qui permet aux navigateurs web de se connecter aux sites web publics de manière indirecte. Ceci est souvent combiné avec un cache qui économise la bande passante en stockant localement certains contenus requis et en donnant de maniière intelligente la copie locale à la requête suivante. }
+     \item{\textbf{Serveur web} : Un serveur web peut faciliter l'échange d'informations entre les membres de la communauté, comme par exemple des services proposés par des membres ou les informations nécessaires pour les contacter.}
+\end{itemize}
+
+%%%%% FIGURE 6
+\begin{figure}[!h]
+\center
+\includegraphics[scale=0.40, angle=90]{figure6.jpeg}
+\caption{Exemple d'architecture d'un réseau mesh sans fil} %la légende
+\label{figure6}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\newpage
+\appendix
+\part{Annexes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Ressources}
+
+\begin{itemize}
+\renewcommand{\labelitemi}{$\bullet$}
+    \item{Conférence de Juliusz Chroboczek à PSES : «~\textit{Commutation, routage et réseau maillé}~»}
+\end{itemize}
+\noindent \textbf{Conférence} : \url{http://lacantine.ubicast.eu/channels/pas-sage-en-seine-2011/}
+
+\medskip
+\begin{itemize}
+\renewcommand{\labelitemi}{$\bullet$}
+    \item{Wireless Networking in the Developing World}
+\end{itemize}
+
+\noindent \textbf{Site} : \url{http://wndw.net/} \\ 
+\noindent \textbf{Livre}  : \url{http://wndw.net/pdf/wndw2-fr/} (FR v2 | Licence Creative Commons BY-SA)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Protocoles}
+\subsection{OLSR} \label{olsr}
+
+OLSR («~\textit{Optimized Link State Routing Protocol}~») est un protocole de routage destiné aux réseaux maillés, sans fil ou mobiles. Le protocole est défini dans la RFC 3626 de l'IETF.
+
+\medskip
+Le concept principal utilisé dans le protocole est celui des relais multipoint, (MPRs). Les MPRs sont des nœuds choisis qui expédient des messages de diffusion pendant le processus d'inondation. Cette technique réduit sensiblement la surcharge due aux messages par rapport à un mécanisme classique d'inondation, où chaque nœud retransmet chaque message quand il reçoit la première copie du message. Dans OLSR, l'information d'état de lien est produite seulement par des nœuds élus comme MPRs, ainsi, une deuxième optimisation est réalisée en réduisant au minimum le nombre des messages de contrôle inondés dans le réseau et comme troisième optimisation, un nœud de MPR doit rapporter seulement des liens entre lui-même et ses sélecteurs.
+
+\medskip
+\noindent \url{https://secure.wikimedia.org/wikipedia/fr/wiki/Optimized_link_state_routing_protocol} \\
+\noindent \textbf{RFC} :  \url{https://www.ietf.org/rfc/rfc3626.txt}
+
+\subsection{BABEL} \label{babel}
+
+Babel est un protocole de routage à vecteur de distance sans boucles de routage pour IPv4 et IPv6. Babel est prévu pour être robuste et efficace aussi bien pour les réseaux maillés que filaires. Les spécifications de Babel font l'objet de la RFC 6126.
+
+\medskip
+\noindent \textbf{Site} : \url{http://www.pps.jussieu.fr/~jch/software/babel/}\\
+\noindent \textbf{RFC} : \url{https://tools.ietf.org/html/rfc6126}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Logiciels} \label{logiciels}
+\subsection{Asterisk} \label{asterisk}
+
+Asterisk est un autocommutateur téléphonique privé (PABX) open source pour systèmes UNIX, Mac OS et Windows. Il permet, entre autres, la messagerie vocale, les files d'attente, les agents d'appels, les musiques d'attente et les mises en garde d'appels, la distribution des appels. Il est possible également d'ajouter l'utilisation des conférences par le biais de l'installation de modules supplémentaires et la recompilation des binaires
+
+\medskip
+Asterisk implémente les protocoles H.320, H.323 et SIP, ainsi qu'un protocole spécifique nommé IAX (\textit{Inter-Asterisk eXchange}). Ce protocole IAX permet la communication entre deux serveurs Asterisk ainsi qu'entre client et serveur Asterisk. Asterisk peut également jouer le rôle de registrar et passerelle avec les réseaux publics (RTC, GSM, etc.) Asterisk est extensible par des scripts ou des modules en langage Perl, C, Python, PHP, et Ruby. Asterisk est publié sous licence GPL et licence propriétaire.
+
+\medskip
+\noindent \url{https://secure.wikimedia.org/wikipedia/fr/wiki/Asterisk\_\%28logiciel\%29}\\
+\noindent \textbf{Site} : \url{https://www.asterisk.org/}
+
+\subsection{DD-WRT} \label{ddwrt}
+
+DD-WRT est un micrologiciel libre et gratuit pour routeurs sans fil fonctionnant sur une base minimale du noyau Linux.
+
+\medskip
+\noindent \textbf{Wikipedia} : \url{https://secure.wikimedia.org/wikipedia/fr/wiki/DD-WRT}\\
+\noindent \textbf{Site} \url{http://www.dd-wrt.com}
+
+
+\subsection{OpenWRT} \label{openwrt}
+
+OpenWrt est une distribution GNU/Linux (licence GPL) minimaliste pour matériel embarqué (Routeurs, Tablettes, Téléphones ...).
+
+\medskip
+\noindent \textbf{Wikipedia} : \url{https://openwrt.org/}\\
+\noindent \textbf{Site} \url{https://secure.wikimedia.org/wikipedia/fr/wiki/OpenWrt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Législation}\label{legislation}
+
+\subsection{En France}
+\subsubsection{ARCEP}
+\noindent Autorité de régulation des communications électroniques et des postes
+
+\medskip
+\noindent Réseaux locaux radioélectriques ou RLAN (Wi-Fi) : les puissances d'émissions autorisées
+
+\medskip
+\noindent Site : \url{http://www.arcep.fr/index.php?id=9272#c12931}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
